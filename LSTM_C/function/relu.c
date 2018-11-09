@@ -2,7 +2,7 @@
 #include "relu.h"
 
 /*
-*input_x : 一次元配列のポインタ変数
+*input_x : 一次元配列のポインタ
 len : 一次元配列の長さ
 */
 
