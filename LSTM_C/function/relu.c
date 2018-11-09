@@ -1,20 +1,10 @@
 #include <stdio.h>
+#include "relu.h"
 
 /*
-一次元配列をReLUに通す
-
-やること
-ヘッダファイル作る
+*input_x : 一次元配列のポインタ変数
+len : 一次元配列の長さ
 */
-
-void relu(float*, int);
-
-int main(void){
-    // ReLU
-    float array[2*3] = {1.0, 3.3, -4.0, -2.1, 3.0, 0.0};
-    int len = sizeof(array) / sizeof(array[0]);
-    relu(array, len);
-}
 
 void relu(float *input_x, int len){
     int i;
@@ -22,6 +12,5 @@ void relu(float *input_x, int len){
         if (input_x[i] < 0){
             input_x[i] = 0;
         }
-        printf("%f\n", input_x[i]);
-    }
+        printf("%f\n", input_x[i]);}
 }
