@@ -1,18 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "../function/sigmoid.h"
 
 /*
-前回のはLSTMレイヤでも何でもなかったので大幅修正
-affineレイヤとLSTMレイヤに分けた
+sigmoid関数を分離させた
 今後やること
-各関数は今後各ヘッダファイルに分ける(FPGA用)
+affine関数をヘッダファイルに分ける
 記憶セルをだだのキャッシュにする(余分に保持しない)
 */
 
-float sigmoid(float x){
-    return (1 / (1 + exp(-x)));
-}
 void affine(float*, float*, float*, float*, int, int, int);
 void lstm(float*, float*, int);
 
