@@ -22,8 +22,8 @@ M, N, Oの名前をrow, matrix_k, columnに変えた
 */
 
 void lstm(float *output, float *input_x, int row){
-    int row, matrix_k, column, t, l,m,i,j,k;
-    row=row, matrix_k = 2, column=2, m=0;
+    int matrix_k, column, t, l,m,i,j,k;
+    matrix_k = 2, column=2, m=0;
 
     float *array_f;
     float *array_g;
