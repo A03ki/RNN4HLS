@@ -1,50 +1,43 @@
+/**
+* @fn void lstm(float *output, float *input_x, int row)
+* @brief 一次元配列をLSTMレイヤに通す関数
+* @param[out] output 出力用の一次元配列(行列積後の要素数と合わせる)
+* @param[in,out] input_x 関数内の重みと行列積を行う一次元配列
+* @param[in] row input_xが二次元配列の時の列の長さ
+* @return void
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "../function/sigmoid.h"
+#include "affine.h"
+#include "lstm.h"
 
 /*
-sigmoid関数を分離させた
+ヘッダファイルの作成
+M, N, Oの名前をrow, matrix_k, columnに変えた
 今後やること
-affine関数をヘッダファイルに分ける
 記憶セルをだだのキャッシュにする(余分に保持しない)
 */
 
-void affine(float*, float*, float*, float*, int, int, int);
-void lstm(float*, float*, int);
-
-int main(void){
-    int M, O, t;
-    M=3, O=2;
-    float *output_x;
-    output_x = malloc(sizeof(float) * M * O);
-    // 初期化
-    for(t=0;t<(M*O);t++){
-        output_x[t] = 0;
-    }
-    float input_x[3*2] = {0.1,0.2,0.3,0.4,0.5,0.6};
-    lstm(output_x, input_x, M);
-    // メモリ解放
-    free(output_x);
-}
-
 void lstm(float *output, float *input_x, int row){
-    int M, N, O, t, l,m,i,j,k;
-    M=row, N = 2, O=2, m=0;
+    int row, matrix_k, column, t, l,m,i,j,k;
+    row=row, matrix_k = 2, column=2, m=0;
 
     float *array_f;
     float *array_g;
     float *array_i;
     float *array_o;
     float *array_c;
-    array_f = malloc(sizeof(float) * M * O);
-    array_g = malloc(sizeof(float) * M * O);
-    array_i = malloc(sizeof(float) * M * O);
-    array_o = malloc(sizeof(float) * M * O);
-    array_c = malloc(sizeof(float) * M * O);
+    array_f = malloc(sizeof(float) * row * column);
+    array_g = malloc(sizeof(float) * row * column);
+    array_i = malloc(sizeof(float) * row * column);
+    array_o = malloc(sizeof(float) * row * column);
+    array_c = malloc(sizeof(float) * row * column);
 
     // 初期化
-    for(t=0;t<(M*O);t++){
+    for(t=0;t<(row*column);t++){
         array_f[t] = 0;
         array_g[t] = 0;
         array_i[t] = 0;
@@ -67,15 +60,15 @@ void lstm(float *output, float *input_x, int row){
     float bais_i[2] = {0.2, 0.3};
     float bais_o[2] = {0.2, 0.3};
     // アフィン変換
-    affine(array_f, input_x, weight_f_x, bais_f, M, N, O);
-    affine(array_g, input_x, weight_g_x, bais_g, M, N, O);
-    affine(array_i, input_x, weight_i_x, bais_i, M, N, O);
-    affine(array_o, input_x, weight_o_x, bais_o, M, N, O);
+    affine(array_f, input_x, weight_f_x, bais_f, row, matrix_k, column);
+    affine(array_g, input_x, weight_g_x, bais_g, row, matrix_k, column);
+    affine(array_i, input_x, weight_i_x, bais_i, row, matrix_k, column);
+    affine(array_o, input_x, weight_o_x, bais_o, row, matrix_k, column);
 
 
     /*
     // 行列積の確認
-    for(t=0;t<(M*O);t++){
+    for(t=0;t<(row*column);t++){
         printf("array_f[%d]=%f\n", t, array_f[t]);
         printf("array_g[%d]=%f\n", t, array_g[t]);
         printf("array_i[%d]=%f\n", t, array_i[t]);
@@ -84,56 +77,56 @@ void lstm(float *output, float *input_x, int row){
     */
 
 
-    for(i=0;i<M;i++){
-        for(k=0;k<N;k++){
-            for(j=0;j<O;j++){
-                printf("(m+k, i*O+j)=(%d, %d)\n", m+k, i*O+j);
-                //printf("output1[%d]=%f\n, weight_f_h[%d]=%f\n, ", m+j, output[m+j], k*O+j, weight_f_h[k*O+j]);
-                printf("array_f[%d]=%f\n",i*O+j, array_f[i*O+j]);
-                printf("weight_f_h=%f\n", weight_f_h[k*O+j]);
-                printf("output[%d]=%f\n", m+k, output[m+k]);
-                array_f[i*O+j] += output[m+k] * weight_f_h[k*O+j];
-                array_g[i*O+j] += output[m+k] * weight_g_h[k*O+j];
-                array_i[i*O+j] += output[m+k] * weight_i_h[k*O+j];
-                array_o[i*O+j] += output[m+k] * weight_o_h[k*O+j];
-                printf("array_f[%d]=%f\n",i*O+j, array_f[i*O+j]);
-                //printf("array_g[%d]=%f\n",i*O+j, array_g[i*O+j]);
-                //printf("array_i[%d]=%f\n",i*O+j, array_i[i*O+j]);
-                //printf("array_o[%d]=%f\n",i*O+j, array_o[i*O+j]);
+    for(i=0;i<row;i++){
+        for(k=0;k<matrix_k;k++){
+            for(j=0;j<column;j++){
+                //printf("(m+k, i*column+j)=(%d, %d)\n", m+k, i*column+j);
+                //printf("output1[%d]=%f\n, weight_f_h[%d]=%f\n, ", m+j, output[m+j], k*column+j, weight_f_h[k*column+j]);
+                //printf("array_f[%d]=%f\n",i*column+j, array_f[i*column+j]);
+                //printf("weight_f_h=%f\n", weight_f_h[k*column+j]);
+                //printf("output[%d]=%f\n", m+k, output[m+k]);
+                array_f[i*column+j] += output[m+k] * weight_f_h[k*column+j];
+                array_g[i*column+j] += output[m+k] * weight_g_h[k*column+j];
+                array_i[i*column+j] += output[m+k] * weight_i_h[k*column+j];
+                array_o[i*column+j] += output[m+k] * weight_o_h[k*column+j];
+                //printf("array_f[%d]=%f\n",i*column+j, array_f[i*column+j]);
+                //printf("array_g[%d]=%f\n",i*column+j, array_g[i*column+j]);
+                //printf("array_i[%d]=%f\n",i*column+j, array_i[i*column+j]);
+                //printf("array_o[%d]=%f\n",i*column+j, array_o[i*column+j]);
             }
         }
-        for(l=0;l<O;l++){
-            //printf("array_f1[%d]=%f\n",i*O+l, array_f[i*O+l]);
-            //printf("array_g[%d]=%f\n",i*O+l, array_g[i*O+l]);
-            //printf("array_i[%d]=%f\n",i*O+l, array_i[i*O+l]);
-            //printf("array_o[%d]=%f\n",i*O+l, array_o[i*O+l]);
-            array_f[i*O+l] = sigmoid(array_f[i*O+l]);
-            //printf("array_f2[%d]=%f\n",i*O+l, array_f[i*O+l]);
+        for(l=0;l<column;l++){
+            //printf("array_f1[%d]=%f\n",i*column+l, array_f[i*column+l]);
+            //printf("array_g[%d]=%f\n",i*column+l, array_g[i*column+l]);
+            //printf("array_i[%d]=%f\n",i*column+l, array_i[i*column+l]);
+            //printf("array_o[%d]=%f\n",i*column+l, array_o[i*column+l]);
+            array_f[i*column+l] = sigmoid(array_f[i*column+l]);
+            //printf("array_f2[%d]=%f\n",i*column+l, array_f[i*column+l]);
 
-            array_g[i*O+l] = tanhf(array_g[i*O+l]);
-            array_i[i*O+l] = sigmoid(array_i[i*O+l]);
-            array_o[i*O+l] = sigmoid(array_o[i*O+l]);
-            array_c[i*O+l] = array_f[i*O+l] * array_c[m+l] + array_g[i*O+l] * array_i[i*O+l];
-            output[i*O+l] = array_o[i*O+l] * tanhf(array_c[i*O+l]);
+            array_g[i*column+l] = tanhf(array_g[i*column+l]);
+            array_i[i*column+l] = sigmoid(array_i[i*column+l]);
+            array_o[i*column+l] = sigmoid(array_o[i*column+l]);
+            array_c[i*column+l] = array_f[i*column+l] * array_c[m+l] + array_g[i*column+l] * array_i[i*column+l];
+            output[i*column+l] = array_o[i*column+l] * tanhf(array_c[i*column+l]);
 
-            //printf("array_f[%d]=%f\n",i*O+l, array_f[i*O+l]);
-            //printf("array_g[%d]=%f\n",i*O+l, array_g[i*O+l]);
-            //printf("array_i[%d]=%f\n",i*O+l, array_i[i*O+l]);
-            //printf("array_o[%d]=%f\n",i*O+l, array_o[i*O+l]);
-            //printf("array_c[%d]=%f\n",i*O+l, array_c[i*O+l]);
-            //printf("output2[%d]=%f\n",i*O+l, output[i*O+l]);
+            //printf("array_f[%d]=%f\n",i*column+l, array_f[i*column+l]);
+            //printf("array_g[%d]=%f\n",i*column+l, array_g[i*column+l]);
+            //printf("array_i[%d]=%f\n",i*column+l, array_i[i*column+l]);
+            //printf("array_o[%d]=%f\n",i*column+l, array_o[i*column+l]);
+            //printf("array_c[%d]=%f\n",i*column+l, array_c[i*column+l]);
+            //printf("output2[%d]=%f\n",i*column+l, output[i*column+l]);
         }
-        m = i*O;  // t-1の役割
+        m = i*column;  // t-1の役割
     }
 
-    for(i=0;i<M;i++){
-        for(j=0;j<O;j++){
-            //printf("array_f[%d]=%f\n",i*O+j, array_f[i*O+j]);
-            //printf("array_g[%d]=%f\n",i*O+j, array_g[i*O+j]);
-            //printf("array_i[%d]=%f\n",i*O+j, array_i[i*O+j]);
-            //printf("array_o[%d]=%f\n",i*O+j, array_o[i*O+j]);
-            //printf("array_c[%d]=%f\n",i*O+j, array_c[j]);
-            printf("output[%d]=%f\n",i*O+j, output[i*O+j]);
+    for(i=0;i<row;i++){
+        for(j=0;j<column;j++){
+            //printf("array_f[%d]=%f\n",i*column+j, array_f[i*column+j]);
+            //printf("array_g[%d]=%f\n",i*column+j, array_g[i*column+j]);
+            //printf("array_i[%d]=%f\n",i*column+j, array_i[i*column+j]);
+            //printf("array_o[%d]=%f\n",i*column+j, array_o[i*column+j]);
+            //printf("array_c[%d]=%f\n",i*column+j, array_c[j]);
+            printf("output[%d]=%f\n",i*column+j, output[i*column+j]);
         }
     }
 
@@ -142,38 +135,4 @@ void lstm(float *output, float *input_x, int row){
     free(array_g);
     free(array_i);
     free(array_o);
-}
-
-void affine(float *output, float *input_x,  float *weight, float *bais, int row, int matrix_k, int column){
-    /*
-    for(i=0;i<row;i++){
-        for(j=0;j<N;j++){
-            printf("(i, j)=(%d, %d) ", i, j);
-            printf("bar[%d]=%d\n",i*N+j, bar[i*N+j]);
-        }
-    }
-    */
-    int i, j, k;
-
-    // 行列積
-    for(i=0;i<row;i++){
-        for(k=0;k<matrix_k;k++){
-            for(j=0;j<column;j++){
-            output[i*column+j] += input_x[i*matrix_k+k] * weight[k*column+j];
-            //printf("(i, j, k)=(%d, %d, %d) ", i, j, k);
-            //printf("output[%d]=%f\n",i*O+j, output[i*O+j]);
-            }
-        }
-    }
-
-    // バイアス加算
-    for(i=0;i<row;i++){
-            for(j=0;j<column;j++){
-            //printf("output[%d]=%f\n",i*column+j, output[i*column+j]);
-            //output[i*O+j] = output[i*O+j] + b[j];
-            output[i*column+j] += bais[j];
-            //printf("output[%d]=%f\n",i*column+j, output[i*column+j]);
-            }
-    }
-
 }

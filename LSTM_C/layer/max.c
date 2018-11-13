@@ -1,33 +1,22 @@
-#include <stdio.h>
-
-/*
-やること
-ヘッダファイルにする
-
-推論時はsoftmaxは必要ないのでその代わりに最大値のindexを取得する関数
+/**
+* @fn int max(float *input_x, int len)
+* @brief 一次元配列の最大値のインデックスを返す関数
+* @param[out] input_x 一次元配列
+* @param[in] len 一次元配列の要素数
+* @return float 最大値のインデックス
 */
 
-int softmax(float *, int);
-int main(void){
-    // Softmax関数
-    float x[5] = {2.0, 4.0, 3.0, 6.0, 2.0};
-    int class_idx = softmax(x, 5);
+#include <stdio.h>
+#include "max.h"
 
-    // 動作確認用
-    printf("max_index: %d\n", class_idx);
+int max(float *input_x, int len){
+  int i;
+  int max_index = 0;
 
-}
-
-int softmax(float *input_x, int len){
-    int i;
-    int max_index = 0;
-
-    // 配列の最大値のインデックスを見つける
-    for(i=1;i<len;i++){
-        if(input_x[i] > input_x[max_index]){
-            max_index = i;
-        }
-    }
-    return max_index;
-
+  for(i=1;i<len;i++){
+    if(input_x[i] > input_x[max_index]){
+      max_index = i;
+      }
+  }
+  return max_index;
 }
