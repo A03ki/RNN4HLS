@@ -15,15 +15,14 @@
 #include "lstm.h"
 
 /*
-ヘッダファイルの作成
-M, N, Oの名前をrow, matrix_k, columnに変えた
+記憶セルarray_cをだだのキャッシュにした(余分に保持しない)
 今後やること
-記憶セルをだだのキャッシュにする(余分に保持しない)
+バイアス, 重みをdeffine.hに移す.
 */
 
 void lstm(float *output, float *input_x, int row){
-    int matrix_k, column, t, l,m,i,j,k;
-    matrix_k = 2, column=2, m=0;
+    int matrix_k, column, t, i, j, k, l, m;
+    matrix_k = 2, column = 2, m = 0;
 
     float *array_f;
     float *array_g;
@@ -34,7 +33,7 @@ void lstm(float *output, float *input_x, int row){
     array_g = malloc(sizeof(float) * row * column);
     array_i = malloc(sizeof(float) * row * column);
     array_o = malloc(sizeof(float) * row * column);
-    array_c = malloc(sizeof(float) * row * column);
+    array_c = malloc(sizeof(float) * row);
 
     // 初期化
     for(t=0;t<(row*column);t++){
@@ -76,7 +75,6 @@ void lstm(float *output, float *input_x, int row){
     }
     */
 
-
     for(i=0;i<row;i++){
         for(k=0;k<matrix_k;k++){
             for(j=0;j<column;j++){
@@ -96,6 +94,7 @@ void lstm(float *output, float *input_x, int row){
             }
         }
         for(l=0;l<column;l++){
+            // printf("%d\n", l);
             //printf("array_f1[%d]=%f\n",i*column+l, array_f[i*column+l]);
             //printf("array_g[%d]=%f\n",i*column+l, array_g[i*column+l]);
             //printf("array_i[%d]=%f\n",i*column+l, array_i[i*column+l]);
@@ -106,8 +105,10 @@ void lstm(float *output, float *input_x, int row){
             array_g[i*column+l] = tanhf(array_g[i*column+l]);
             array_i[i*column+l] = sigmoid(array_i[i*column+l]);
             array_o[i*column+l] = sigmoid(array_o[i*column+l]);
-            array_c[i*column+l] = array_f[i*column+l] * array_c[m+l] + array_g[i*column+l] * array_i[i*column+l];
-            output[i*column+l] = array_o[i*column+l] * tanhf(array_c[i*column+l]);
+            // printf("(%d, %d)\n", l, l);
+            array_c[l] = array_f[i*column+l] * array_c[l] + array_g[i*column+l] * array_i[i*column+l];
+            // printf("(%d, %d)\n", i*column+l, m+l);
+            output[i*column+l] = array_o[i*column+l] * tanhf(array_c[l]);
 
             //printf("array_f[%d]=%f\n",i*column+l, array_f[i*column+l]);
             //printf("array_g[%d]=%f\n",i*column+l, array_g[i*column+l]);
@@ -135,4 +136,5 @@ void lstm(float *output, float *input_x, int row){
     free(array_g);
     free(array_i);
     free(array_o);
+    free(array_c);
 }
