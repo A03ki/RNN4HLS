@@ -8,11 +8,11 @@ Parameters
 ----------
 output : array of pointer to float
   出力用の一次元配列(行列積後の要素数と合わせる)
-input_x : array of pointer to float
+input_x : const array of pointer to float
   重みと行列積を行う一次元配列
-weight : array of pointer to float
+weight : const array of pointer to float
   一次元配列からなる重み
-bais : array of pointer to float
+bais : const array of pointer to float
    一次元配列からなるバイアス
 row : int
   input_xの列の長さ
@@ -22,6 +22,6 @@ column : int
   weightの行の長さ
 */
 
-void affine(float*, float*, float*, float*, int, int, int);
+void affine(float*, const float*, const float*, const float*, int, int, int);
 
 #endif
