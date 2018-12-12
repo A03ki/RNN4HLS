@@ -1,5 +1,5 @@
 /**
-* @fn int max(float *input_x, int len)
+* @fn int max(const float *input_x, int len)
 * @brief 一次元配列の最大値のインデックスを返す関数
 * @param[out] input_x 一次元配列
 * @param[in] len 一次元配列の要素数
@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include "max.h"
 
-int max(float *input_x, int len){
+int max(const float *input_x, int len){
   int i;
   int max_index = 0;
 

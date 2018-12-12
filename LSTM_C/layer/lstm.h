@@ -8,7 +8,7 @@ Parameters
 ----------
 output : array of pointer to float
   一次元配列(出力用)
-input_x : array of pointer to float
+input_x : const array of pointer to float
   一次元配列(入力用)
 row : int
   input_xが二次元配列のときの列の長さ
@@ -22,6 +22,6 @@ Note
 二次元配列を一次元配列にしたものを入力として入れる
 */
 
-void lstm(float*, float*, int);
+void lstm(float*, const float*, int);
 
 #endif
