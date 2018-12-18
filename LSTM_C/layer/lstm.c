@@ -15,8 +15,6 @@
 
 
 /*
-記憶セルarray_cをだだのキャッシュにした(余分に保持しない)
-今後やること
 バイアス, 重みをdeffine.hに移す.
 */
 
@@ -24,17 +22,9 @@ void lstm(float *output, const float *input_x, int row){
     int matrix_k, column, t, i, j, k, l, m;
     matrix_k = 2, column = 2, m = 0;
 
-    float array_fgio[4*6];
-    float array_c[3];
-
     // 初期化
-    for(t=0;t<(4*row*column);t++){
-        array_fgio[t] = 0;
-        //printf("array_fgio[%d]=%f\n", t, array_fgio[t]);
-    }
-    for(t=0;t<row;t++){
-        array_c[t] = 0;
-    }
+    float array_fgio[4*6] = {0};
+    float array_c[3] = {0};
 
     // 重み定義
     int w_rowcom = 2*2;
