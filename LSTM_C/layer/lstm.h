@@ -20,6 +20,7 @@ Return
 Note
 ----
 二次元配列を一次元配列にしたものを入力として入れる
+Pytorchの重み(weight_ih_l0, weight_hh_l0)は転置して使う
 */
 
 void lstm(float*, const float*, int);
