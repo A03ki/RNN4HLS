@@ -12,19 +12,20 @@
 #include <stdlib.h>
 #include <math.h>
 #include "../function/sigmoid.h"
+#include "../layer/affine.h"
 #include "lstm.h"
 
 
 /*
-今までのはLSTMでは無かったので修正,
-重みは全て転置させることでPytorchとの一致を確認
+t_stepを宣言, 代入していなかったので修正,
+内部の処理をaffine関数に置き換え
 */
 
 void lstm(float *output, const float *input_x, int row){
-  int matrix_k, column,i, k, j, t, l, m;
-  matrix_k =3, column =3, m = 0;
+  int matrix_k, column,i, k, j, t, l, t_pre, t_step;
+  matrix_k =3, column =3, t_pre = 0, t_step=1;
   //int row = 4;
-  int fgio_t_size = 1*3*4; // tのときのifgoのsize
+  int ifgo_t_size = 3*4; // tのときのifgoのsize
 
   // 初期化
   float array_fgio[4*3*4] = {0};
@@ -57,46 +58,24 @@ void lstm(float *output, const float *input_x, int row){
   //float input_x[4*3] = {0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 3.0, 4.0, 5.0};
 
   // アフィン変換
-  for(i=0;i<row;i++){
-      for(k=0;k<matrix_k;k++){
-          for(j=0;j<4*column;j++){
-              array_fgio[i*4*column+j] += input_x[i*matrix_k+k] * weight_fgio_x[k*4*column+j];
-          }
-      }
-  }
-  for(i=0;i<row;i++){
-      for(j=0;j<fgio_t_size;j++){
-          array_fgio[i*fgio_t_size+j] += bias_fgio[j];
-      }
-  }
+  affine(array_fgio, input_x, weight_fgio_x, bias_fgio, row, matrix_k, ifgo_t_size);
 
   for(t=0;t<row;t++){
       for(i=0;i<t_step;i++){
           for(k=0;k<column;k++){
-              for(j=0;j<4*column;j++){
-                  array_fgio[t*fgio_t_size+i*4*column+j] += output[m+i*column+k] * weight_fgio_h[k*4*column+j];
+              for(j=0;j<ifgo_t_size;j++){
+                  array_fgio[t*ifgo_t_size+i*ifgo_t_size+j] += output[t_pre+i*column+k] * weight_fgio_h[k*ifgo_t_size+j];
               }
           }
       }
       for(l=0;l<column;l++){
-          //printf("1 array_i[%d]=%f\n",t*fgio_t_size+l, array_fgio[t*fgio_t_size+l]);
-          //printf("1 array_f[%d]=%f\n",column+t*fgio_t_size+l, array_fgio[column+t*fgio_t_size+l]);
-          //printf("1 array_g[%d]=%f\n",2*column+t*fgio_t_size+l, array_fgio[2*column+t*fgio_t_size+l]);
-          //printf("1 array_o[%d]=%f\n",3*column+t*fgio_t_size+l, array_fgio[3*column+t*fgio_t_size+l]);
-          //printf("%d\n", t*fgio_t_size+l);
-          array_fgio[t*fgio_t_size+l] = sigmoid(array_fgio[t*fgio_t_size+l]);
-          array_fgio[column+t*fgio_t_size+l] = sigmoid(array_fgio[column+t*fgio_t_size+l]);
-          array_fgio[2*column+t*fgio_t_size+l] = tanhf(array_fgio[2*column+t*fgio_t_size+l]);
-          array_fgio[3*column+t*fgio_t_size+l] = sigmoid(array_fgio[3*column+t*fgio_t_size+l]);
-          array_c[l] = array_fgio[column+t*fgio_t_size+l] * array_c[l] + array_fgio[t*fgio_t_size+l] * array_fgio[2*column+t*fgio_t_size+l];
-          output[t*column+l] = array_fgio[3*column+t*fgio_t_size+l] * tanhf(array_c[l]);
-          //printf("2 array_i[%d]=%f\n",t*fgio_t_size+l, array_fgio[t*fgio_t_size+l]);
-          //printf("2 array_f[%d]=%f\n",column+t*fgio_t_size+l, array_fgio[column+t*fgio_t_size+l]);
-          //printf("2 array_g[%d]=%f\n",2*column+t*fgio_t_size+l, array_fgio[2*column+t*fgio_t_size+l]);
-          //printf("2 array_o[%d]=%f\n",3*column+t*fgio_t_size+l, array_fgio[3*column+t*fgio_t_size+l]);
-          //printf("array_c[%d]=%f\n",l, array_c[l]);
-          //printf("output[%d]=%f\n",t*column+l, output[t*column+l]);
+          array_fgio[t*ifgo_t_size+l] = sigmoid(array_fgio[t*ifgo_t_size+l]);
+          array_fgio[column+t*ifgo_t_size+l] = sigmoid(array_fgio[column+t*ifgo_t_size+l]);
+          array_fgio[2*column+t*ifgo_t_size+l] = tanhf(array_fgio[2*column+t*ifgo_t_size+l]);
+          array_fgio[3*column+t*ifgo_t_size+l] = sigmoid(array_fgio[3*column+t*ifgo_t_size+l]);
+          array_c[l] = array_fgio[column+t*ifgo_t_size+l] * array_c[l] + array_fgio[t*ifgo_t_size+l] * array_fgio[2*column+t*ifgo_t_size+l];
+          output[t*column+l] = array_fgio[3*column+t*ifgo_t_size+l] * tanhf(array_c[l]);
       }
-      m = t*column;  // t-1の役割
+      t_pre = t*column;  // t-1の役割
   }
 }
