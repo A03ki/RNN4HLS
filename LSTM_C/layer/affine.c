@@ -21,23 +21,14 @@ void affine(float *output, const float *input_x, const float *weight, const floa
     for(k=0;k<matrix_k;k++){
       for(j=0;j<column;j++){
         output[i*column+j] += input_x[i*matrix_k+k] * weight[k*column+j];
-          // 確認用
-          //printf("(i, j, k)=(%d, %d, %d) ", i, j, k);
-          //printf("output[%d]=%f\n",i*O+j, output[i*O+j]);
       }
     }
   }
 
   // バイアス加算
-  //printf("Affine\n");
   for(i=0;i<row;i++){
     for(j=0;j<column;j++){
-      // 確認用
-      //printf("output[%d]=%f\n",i*column+j, output[i*column+j]);
-      //output[i*O+j] = output[i*O+j] + b[j];
       output[i*column+j] += bais[j];
-      // 確認用
-      //printf("output[%d]=%f\n",i*column+j, output[i*column+j]);
     }
   }
 }
