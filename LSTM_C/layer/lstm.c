@@ -1,11 +1,11 @@
 /**
 * @fn void lstm(float *output, const float *input_x, int row)
-* @brief 一次元配列をLSTMレイヤに通す関数
+* @brief 一次元配列を一方向LSTMレイヤに通す関数
 * @param[out] output 出力用の一次元配列(行列積後の要素数と合わせる)
 * @param[in,out] input_x 関数内の重みと行列積を行う一次元配列
 * @param[in] row input_xが二次元配列の時の列の長さ
 * @return void
-* @detail Pytorchの重みは転置して使う
+* @detail Pytorchの重みは転置, バイアスは2つを足して使う
 */
 
 #include <stdio.h>
