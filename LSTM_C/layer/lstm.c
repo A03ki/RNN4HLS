@@ -17,8 +17,7 @@
 
 
 /*
-t_stepを宣言, 代入していなかったので修正,
-内部の処理をaffine関数に置き換え
+t*ifgo_t_size+lを毎回計算していたので, t_elementに格納するようにした.
 */
 
 void lstm(float *output, const float *input_x, int row){
