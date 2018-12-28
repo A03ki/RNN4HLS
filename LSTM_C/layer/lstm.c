@@ -17,19 +17,18 @@
 
 
 /*
-t*ifgo_t_size+lを毎回計算していたので, t_elementに格納するようにした.
+時刻tにおいての行列積は必ず行が1よりその部分のfor文を削除.
+それに伴い, t_stepの削除とfor文内のkをiに置き換えた.
 */
 
 void lstm(float *output, const float *input_x, int row){
-  int matrix_k, column,i, k, j, t, l, t_pre, t_step, t_element;
-  matrix_k =3, column =3, t_pre = 0, t_step=1;
-  //int row = 4;
+  int matrix_k, column, i, j, t, l, t_pre, t_element;
+  matrix_k =3, column =3, t_pre = 0;
   int ifgo_t_size = 3*4; // tのときのifgoのsize
 
   // 初期化
   float array_fgio[4*3*4] = {0};
   float array_c[3] = {0};
-  //float output[4*3] = {0.0};
 
   //重み定義
   float weight_fgio_x[3*4*3] = {0.29748732,  0.27099025, -0.11877558, -0.07069314,  0.2108646 ,
@@ -54,18 +53,14 @@ void lstm(float *output, const float *input_x, int row){
      0.61093354, -0.3490818 , -0.14233065, -0.2899597 , -0.29693842,
      -0.35145867, -0.3723213};
 
-  //float input_x[4*3] = {0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 4.0, 3.0, 4.0, 5.0};
-
   // アフィン変換
   affine(array_fgio, input_x, weight_fgio_x, bias_fgio, row, matrix_k, ifgo_t_size);
 
   for(t=0;t<row;t++){
-    for(i=0;i<t_step;i++){
-      for(k=0;k<column;k++){
+      for(i=0;i<column;i++){
         for(j=0;j<ifgo_t_size;j++){
-          array_fgio[t*ifgo_t_size+i*ifgo_t_size+j] += output[t_pre+i*column+k] * weight_fgio_h[k*ifgo_t_size+j];
+          array_fgio[t*ifgo_t_size+j] += output[t_pre+i] * weight_fgio_h[i*ifgo_t_size+j];
         }
-      }
     }
     for(l=0;l<column;l++){
       t_element = t*ifgo_t_size+l;
