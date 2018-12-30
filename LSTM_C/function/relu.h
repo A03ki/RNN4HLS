@@ -1,4 +1,4 @@
-#ifndef RELU_H
+﻿#ifndef RELU_H
 #define RELU_H
 
 /*
@@ -12,6 +12,6 @@ len : int
   一次元配列の要素数
 */
 
-void relu(float*, int);
+void relu(float *, int);
 
 #endif

@@ -1,4 +1,4 @@
-#ifndef MATMUL_H
+﻿#ifndef MATMUL_H
 #define MATMUL_H
 
 /*
@@ -20,6 +20,6 @@ column : int
   weightの行の長さ
 */
 
-void matmul(float*, const float*, const float*, int, int, int);
+void matmul(float *, const float *, const float *, int, int, int);
 
 #endif

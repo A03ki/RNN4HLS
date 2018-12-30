@@ -1,4 +1,4 @@
-#ifndef MAX_H
+﻿#ifndef MAX_H
 #define MAX_H
 
 /*

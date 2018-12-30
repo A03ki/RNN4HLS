@@ -1,4 +1,4 @@
-#ifndef SIGMOID_H
+﻿#ifndef SIGMOID_H
 #define SIGMOID_H
 
 /*

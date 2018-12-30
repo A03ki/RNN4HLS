@@ -1,4 +1,4 @@
-#ifndef LSTM_H
+﻿#ifndef LSTM_H
 #define LSTM_H
 
 /*
@@ -24,6 +24,6 @@ Pytorchの重み(weight_ih_l0, weight_hh_l0)は転置して使う
 Pytorchのバイアス(bias_ih_l0, bias_hh_l0)は足して使う
 */
 
-void lstm(float*, const float*, int);
+void lstm(float *, const float *, int);
 
 #endif
