@@ -1,1 +1,1 @@
-# LSTM_on_FPGA
+# RNN4HLS
