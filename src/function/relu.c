@@ -16,6 +16,5 @@ void relu(float *input_x, 　int len) {
                 if (input_x[i] < 0) {
                         input_x[i] = 0;
                 }
-                printf("%f\n", input_x[i]);
         }
 }
