@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "relu.h"
 
-void relu(float *input_x, 　int len) {
+void relu(float *input_x, int len) {
         int i;
         for (i = 0; i < len; i++) {
                 if (input_x[i] < 0) {
