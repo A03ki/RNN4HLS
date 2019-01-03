@@ -16,6 +16,12 @@
 
 void affine(float *output, const float *input_x, const float *weight, const float *bais, int row, int matrix_k, int column) {
         int i, j, k;
+
+        // 初期化
+        for(i=0; i<row*column; i++) {
+                output[i] = 0.0;
+        }
+
         // 行列積
         for (i = 0; i < row; i++) {
                 for (k = 0; k < matrix_k; k++) {
