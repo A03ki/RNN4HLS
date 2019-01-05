@@ -21,7 +21,7 @@
 #include "lstm.h"
 
 /*
-   layerとして複数回使えるように, weightとbiasを引数にした
+   outputの初期化
  */
 
 void lstm(float *output, const float *input_x, const float *weight_x, const float *weight_h, const float *bias, int row, int matrix_k, int column) {
@@ -32,6 +32,9 @@ void lstm(float *output, const float *input_x, const float *weight_x, const floa
         // 初期化
         float array_fgio[4 * 3 * 4] = { 0 };
         float array_c[3]            = { 0 };
+        for(i=0; i<row*column; i++) {
+                output[i] = 0.0;
+        }
 
         // アフィン変換
         affine(array_fgio, input_x, weight_x, bias, row, matrix_k, ifgo_t_size);
