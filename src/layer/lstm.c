@@ -30,8 +30,8 @@ void lstm(float *output, const float *input_x, const float *weight_x, const floa
         int ifgo_t_size = column * 4; // tのときのifgoのsize
 
         // 初期化
-        float array_fgio[4 * 3 * 4] = { 0 };
-        float array_c[3]            = { 0 };
+        float array_fgio[4000] = {0};
+        float array_c[10]      = {0};
         for(i=0; i<row*column; i++) {
                 output[i] = 0.0;
         }
