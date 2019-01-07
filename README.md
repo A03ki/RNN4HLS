@@ -8,7 +8,7 @@ This project has one-way LSTM.
 Sorry, this project only take inference process.
 
 ## Demo
-You can try to run this sample code "RNN4HLS/sample/sine_wave_inf.ipynb" on Jupyter Notebook.
+You can try to run this sample code "[RNN4HLS/sample/sine_wave_inf.ipynb](https://github.com/A03ki/RNN4HLS/blob/master/sample/sine_wave_inf.ipynb)" on Jupyter Notebook.
 
 ## Licence
 This project is under the [MIT](https://github.com/A03ki/LSTM_on_FPGA/blob/master/LICENSE) license.
