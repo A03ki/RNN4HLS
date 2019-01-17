@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @fn void lstm(float *output, const float *input_x, const float *weight_x, const float *weight_h, const float *bias, int row, int matrix_k, int column)
  * @brief 一次元配列を一方向LSTMレイヤに通す関数
  * @param[out] output 出力用の一次元配列(行列積後の要素数と合わせる)
@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "../function/sigmoid.h"
-#include "../layer/affine.h"
 #include "lstm.h"
 
 /*
@@ -25,7 +24,7 @@
  */
 
 void lstm(float *output, const float *input_x, const float *weight_x, const float *weight_h, const float *bias, int row, int matrix_k, int column) {
-        int i, j, t, l, t_pre, t_element;
+        int i, j, k, t, l, t_pre, t_element;
         t_pre = 0;
         int ifgo_t_size = column * 4; // tのときのifgoのsize
 
@@ -37,7 +36,18 @@ void lstm(float *output, const float *input_x, const float *weight_x, const floa
         }
 
         // アフィン変換
-        affine(array_fgio, input_x, weight_x, bias, row, matrix_k, ifgo_t_size);
+        for (i = 0; i < row; i++) {
+                for (k = 0; k < matrix_k; k++) {
+                        for (j = 0; j < ifgo_t_size; j++) {
+                                array_fgio[i * ifgo_t_size + j] += input_x[i * matrix_k + k] * weight_x[k * column + j];
+                        }
+                }
+        }
+        for (i = 0; i < row; i++) {
+                for (j = 0; j < ifgo_t_size; j++) {
+                        array_fgio[i * ifgo_t_size + j] += bias[j];
+                }
+        }
 
         for (t = 0; t < row; t++) {
                 for (i = 0; i < column; i++) {
