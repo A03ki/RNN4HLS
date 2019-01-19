@@ -20,11 +20,11 @@
 #include "lstm.h"
 
 /*
-   outputの初期化
+    lをkに置き換えた, コメントの追加
  */
 
 void lstm(float *output, const float *input_x, const float *weight_x, const float *weight_h, const float *bias, int row, int matrix_k, int column) {
-        int i, j, k, t, l, t_pre, t_element;
+        int i, j, k, t, t_pre, t_element;
         t_pre = 0;
         int ifgo_t_size = column * 4; // tのときのifgoのsize
 
@@ -48,21 +48,21 @@ void lstm(float *output, const float *input_x, const float *weight_x, const floa
                         array_fgio[i * ifgo_t_size + j] += bias[j];
                 }
         }
-
+        // Time step
         for (t = 0; t < row; t++) {
                 for (i = 0; i < column; i++) {
                         for (j = 0; j < ifgo_t_size; j++) {
                                 array_fgio[t * ifgo_t_size + j] += output[t_pre + i] * weight_h[i * ifgo_t_size + j];
                         }
                 }
-                for (l = 0; l < column; l++) {
-                        t_element                          = t * ifgo_t_size + l;
+                for (k = 0; k < column; k++) {
+                        t_element                          = t * ifgo_t_size + k;
                         array_fgio[t_element]              = sigmoid(array_fgio[t_element]);
                         array_fgio[column + t_element]     = sigmoid(array_fgio[column + t_element]);
                         array_fgio[2 * column + t_element] = tanhf(array_fgio[2 * column + t_element]);
                         array_fgio[3 * column + t_element] = sigmoid(array_fgio[3 * column + t_element]);
-                        array_c[l]                         = array_fgio[column + t_element] * array_c[l] + array_fgio[t_element] * array_fgio[2 * column + t_element];
-                        output[t * column + l]             = array_fgio[3 * column + t_element] * tanhf(array_c[l]);
+                        array_c[k]                         = array_fgio[column + t_element] * array_c[k] + array_fgio[t_element] * array_fgio[2 * column + t_element];
+                        output[t * column + k]             = array_fgio[3 * column + t_element] * tanhf(array_c[k]);
                 }
                 t_pre = t * column; // t-1の役割
         }
