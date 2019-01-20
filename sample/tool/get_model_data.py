@@ -68,15 +68,20 @@ class GetDefinition(GetModelData):
 
     def __init__(self, model, input_x_row):
         super().__init__(model)
-        self.macro_len_str = self.get_definition_macro_flatten_len()
+        self.size_output = []
         self.variable_size_str = self.get_definition_variable_size(input_x_row)
+        self.macro_str = self.get_definition_macro_flatten_len(self.size_output)
         self.variable_params_str = self.get_definition_variable_params()
 
-    def get_definition_macro_flatten_len(self):
-        name_params_str = ''
+    def get_definition_macro_flatten_len(self, size_output):
+        macro_str = ''
+        assert size_output == [], 'size_output is empty list'
         for name, size in zip(self.name_params, self.size_flatten):
-            name_params_str += '#define {0} {1}\n'.format(name.upper(), size)
-        return name_params_str
+            macro_str += '#define {0} {1}\n'.format(name.upper(), size)
+        for i, module in enumerate(self.modules):
+            macro_str += '#define OUTPUT_{0} {1}\n'.format(module.upper(),
+                                                           size_output[i])
+        return macro_str
 
     def get_definition_variable_size(self, input_x_row):
         name_iter = iter(self.name_params)
@@ -85,25 +90,25 @@ class GetDefinition(GetModelData):
         size_def = ['int {0[0]}_row = {1};\n',
                     'int {0[0]}_matrix_k = {1};\n',
                     'int {0[0]}_column = {1};\n']
-        size_input = 0
+        self.size_output = []
         for name, shape in zip(name_iter, shape_iter):
             if name.startswith('lstm') and 'weight_ih' in name:
                 if 'lstm0_' not in name:
-                    input_x_row = int(size_input / shape[0])
+                    input_x_row = int(self.size_output[-1] / shape[0])
                 size_str += size_def[0].format(name.split('_'), input_x_row)
                 size_str += size_def[1].format(name.split('_'), shape[0])
                 shape_next = next(shape_iter)
                 next(name_iter)
                 size_str += size_def[2].format(name.split('_'), shape_next[0])
-                size_input = input_x_row * shape_next[0]
+                self.size_output.append(input_x_row * shape_next[0])
             elif name.startswith('linear') and 'weight' in name:
-                if 'linear0' not in name:
-                    size_input = input_x_row * shape[1]
-                input_x_row = int(size_input / shape[0])
+                if 'linear0_' not in name:
+                    self.size_output[-1] = input_x_row * shape[1]
+                input_x_row = int(self.size_output[-1] / shape[0])
                 size_str += size_def[0].format(name.split('_'), input_x_row)
                 size_str += size_def[1].format(name.split('_'), shape[0])
                 size_str += size_def[2].format(name.split('_'), shape[1])
-                size_input = shape[0] * shape[1]
+                self.size_output.append(input_x_row * shape[1])
         return size_str
 
     def get_definition_variable_params(self):
