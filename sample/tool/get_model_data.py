@@ -1,5 +1,22 @@
 class GetModelData:
+    """
+    モデルの各パラメーターについての情報を保持する。
 
+    Attributes
+    ----------
+    model : torch.nn.Module
+        PyTorchで作ったモデル。
+    modules : list of str
+        model内に含まれる各層。
+    name_params: list of str
+        各層のパラメーターの名前。
+    params : list of torch
+        各層のパラメータ。
+    size_shape : list of tuple
+        各層の転置済みパラメーターのサイズ。
+    size_flatten: list of int
+        各層の転置済みパラメーターを一次元配列にした時の長さ。
+    """
     def __init__(self, model):
         self.model = model
         self.modules = self.get_module_list()
