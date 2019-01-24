@@ -96,6 +96,7 @@ class GetDefinition(GetModelData):
         for name, size in zip(self.name_params, self.size_flatten):
             macro_str += '#define {0} {1}\n'.format(name.upper(), size)
         for i, module in enumerate(self.modules):
+        assert size_output != [], 'size_output is empty list'
             macro_str += '#define OUTPUT_{0} {1}\n'.format(module.upper(),
                                                            size_output[i])
         return macro_str
