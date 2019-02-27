@@ -113,11 +113,12 @@ class GetDefinition(GetModelData):
             if name.startswith('lstm') and 'weight_ih' in name:
                 if 'lstm0_' not in name:
                     input_x_row = int(self.size_output[-1] / shape[0])
-                size_str += size_def[0].format(name.split('_'), input_x_row)
-                size_str += size_def[1].format(name.split('_'), shape[0])
+                name_sp = name.split('_')
+                size_str += size_def[0].format(name_sp, input_x_row)
+                size_str += size_def[1].format(name_sp, shape[0])
                 shape_next = next(shape_iter)
                 next(name_iter)
-                size_str += size_def[2].format(name.split('_'), shape_next[0])
+                size_str += size_def[2].format(name_sp, shape_next[0])
                 self.size_output.append(input_x_row * shape_next[0])
             elif name.startswith('linear') and 'weight' in name:
                 if 'linear0_' not in name:
