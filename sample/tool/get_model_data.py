@@ -30,21 +30,20 @@ class GetModelData:
         for module in self.modules:
             if module.startswith('lstm'):
                 for name, param in param_name_gene:
+                    name_sp = name.split(".")[2]
                     if 'bias_ih' not in name:
-                        name_params.append('{0}_{1[2]}'.format(module,
-                                           name.split('.')))
+                        name_params.append(f'{module}_{name_sp}')
                         params.append(param)
                     else:
                         name_next, param_next = next(param_name_gene)
-                        name_params.append('{0}_{1[2]}'.format(module,
-                                           name.replace('_ih', '').split('.')))
+                        name_params.append(f'{module}_'
+                                           + f'{name_sp.replace("_ih", "")}')
                         params.append(param + param_next)
                         break
 
             elif module.startswith('linear'):
                 for name, param in param_name_gene:
-                    name_params.append('{0}_{1[2]}'.format(module,
-                                       name.split('.')))
+                    name_params.append(f'{module}_{name.split(".")[2]}')
                     params.append(param)
                     if 'bias' in name:
                         break
@@ -92,13 +91,14 @@ class GetDefinition(GetModelData):
 
     def get_definition_macro_flatten_len(self, size_output):
         macro_str = ''
-        assert size_output == [], 'size_output is empty list'
-        for name, size in zip(self.name_params, self.size_flatten):
-            macro_str += '#define {0} {1}\n'.format(name.upper(), size)
-        for i, module in enumerate(self.modules):
         assert size_output != [], 'size_output is empty list'
-            macro_str += '#define OUTPUT_{0} {1}\n'.format(module.upper(),
-                                                           size_output[i])
+        for name, size in zip(self.name_params, self.size_flatten):
+            macro_str += f'#define {name.upper()} {size}\n'
+        macro_str += f'#define INPUT_X {self.size_input}\n'
+        for module, size in zip(self.modules, size_output):
+            macro_str += f'#define OUTPUT_{module.upper()} {size}\n'
+        macro_str += f'#define INPUT_COLUMN {self.size_shape[1][0]}\n'
+
         return macro_str
 
     def get_definition_variable_size(self, input_x_row):
@@ -133,6 +133,6 @@ class GetDefinition(GetModelData):
     def get_definition_variable_params(self):
         params_str = ''
         for name, param in zip(self.name_params, self.params):
-            params_str += 'float {0}[{1}]'.format(name, name.upper()) \
+            params_str += f'float {name}[{name.upper()}]' \
                 + ' = {' + ','.join(self.param_to_str1d(param)) + '};\n'
         return params_str
