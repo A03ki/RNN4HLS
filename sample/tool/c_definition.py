@@ -45,7 +45,7 @@ class Definition:
         macro_str += define_macro('INPUT_X', self.input_x_row)
         for module, size in zip(self.modules, size_output):
             macro_str += define_macro(f'OUTPUT_{module.upper()}', size)
-        macro_str += define_macro('INPUT_COLUMN', self.size_shape[1][0])
+        macro_str += define_macro('OUTPUT_LSTM0_COLUMN', self.size_shape[1][0])
 
         return macro_str
 
