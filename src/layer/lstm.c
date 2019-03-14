@@ -18,12 +18,10 @@
 #include <math.h>
 #include "../function/sigmoid.h"
 #include "lstm.h"
+#include "../../sample/define.h"
 
-/*
-    lをkに置き換えた, コメントの追加
- */
 
-void lstm(float *output, const float *input_x, const float *weight_x, const float *weight_h, const float *bias, int row, int matrix_k, int column) {
+void lstm(float output[OUTPUT_LSTM0], const float input_x[INPUT_X], const float weight_x[LSTM0_WEIGHT_IH_L0], const float weight_h[LSTM0_WEIGHT_HH_L0], const float bias[LSTM0_BIAS_L0], int row, int matrix_k, int column) {
         int i, j, k, t, t_pre, t_element;
         t_pre = 0;
         int ifgo_t_size = column * 4; // tのときのifgoのsize
