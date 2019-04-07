@@ -5,9 +5,9 @@
  * @param[in,out] input_x 重みと行列積を行う一次元配列
  * @param[in,out] weight 一次元配列からなる重み
  * @param[in,out] bais 一次元配列からなるバイアス
- * @param[in] row input_xの列の長さ
- * @param[in] matrix_k input_kの行の長さ
- * @param[in] column weightの行の長さ
+ * @param[in] row input_xの行の長さ
+ * @param[in] matrix_k input_kの列の長さ
+ * @param[in] column weightの列の長さ
  * @return void
  */
 

@@ -15,11 +15,11 @@ weight : const array of pointer to float
 bais : const array of pointer to float
 一次元配列からなるバイアス
 row : int
-input_xの列の長さ
+input_xの行の長さ
 matrix_k : int
-input_kの行の長さ
+input_kの列の長さ
 column : int
-weightの行の長さ
+weightの列の長さ
  */
 
 void affine(float *, const float *, const float *, const float *, int, int, int);

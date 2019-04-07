@@ -6,8 +6,8 @@
  * @param[in,out] weight_x input_xと行列積を行う一次元配列の重み
  * @param[in,out] weight_h 時刻t-1の時のoutputと行列積を行う一次元配列の重み
  * @param[in,out] bias 一次元配列のバイアス. 転置した重みの行と同じ長さを持つ
- * @param[in] row input_xが二次元配列の時の列の長さ
- * @param[in] matrix_k input_xが二次元配列の時の行の長さ
+ * @param[in] row input_xが二次元配列の時の行の長さ
+ * @param[in] matrix_k input_xが二次元配列の時の列の長さ
  * @param[in] column weightが二次元配列の時の列の長さ
  * @return void
  * @detail Pytorchの重みは転置, バイアスは2つを足して使う

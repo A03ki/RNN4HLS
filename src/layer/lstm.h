@@ -17,11 +17,11 @@ weight_h : const array of pointer to float
 bias : const array of pointer to float
   一次元配列のバイアス. 転置した重みの行と同じ長さを持つ
 row : int
-  input_xが二次元配列のときの列の長さ
+  input_xが二次元配列のときの行の長さ
 matrix_k : int
-  input_xが二次元配列のときの行の長さ(weight_hが二次元配列のときの列の長さ)
+  input_xが二次元配列のときの列の長さ(weight_hが二次元配列のときの行の長さ)
 column : int
-  weight_hが二次元配列のときの行の長さ
+  weight_hが二次元配列のときの列の長さ
 
 Return
 ------
